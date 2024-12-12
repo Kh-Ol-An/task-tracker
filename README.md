@@ -1,75 +1,78 @@
-# Nuxt Minimal Starter
+# Task Tracker
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+This repository contains a test project built with Nuxt 3 and Vue.js as part of a simplified frontend implementation of a task management tool similar to Trello or Jira.
 
-## Setup
+---
 
-Make sure to install dependencies:
+## Overview
 
-```bash
-# npm
-npm install
+The Task Tracker is a simplified frontend application designed for managing tasks in a team. It provides functionality to create, edit, delete, and organize tasks within a visually intuitive dashboard. Tasks are displayed in columns according to their status, and users can easily drag and drop tasks between columns, automatically updating their status.
 
-# pnpm
-pnpm install
+### Core Features:
+- **Task Management**: Create, edit, and delete tasks with the following fields:
+   - Title
+   - Description
+   - Responsible Person
+   - Executors
+   - Status (TODO, In Progress, Done)
+   - Priority
+- **Dashboard**:
+   - Columns representing task statuses (TODO, In Progress, Done).
+   - Drag-and-drop functionality for task reorganization.
+   - Automatic status updates upon dragging between columns.
+- **Global State Management**: Ensures seamless data handling across components.
 
-# yarn
-yarn install
+---
 
-# bun
-bun install
-```
+## Minimum Requirements
 
-## Development Server
+- **Node.js**: Version 16 or higher.
+- **NPM**: Comes with Node.js installation.
+- **Browser**: Modern browser with JavaScript support (e.g., Chrome, Firefox).
 
-Start the development server on `http://localhost:3000`:
+---
 
-```bash
-# npm
-npm run dev
+## Technologies Used
 
-# pnpm
-pnpm dev
+- **Nuxt 3**: Framework for building Vue.js applications.
+- **Vue.js**: Reactive framework for user interfaces.
+- **Pinia**: For global state management.
+- **Tailwind CSS**: Utility-first CSS framework for styling.
+- **Vue Draggable**: For drag-and-drop functionality.
 
-# yarn
-yarn dev
+---
 
-# bun
-bun run dev
-```
+## Local Launch Instructions
 
-## Production
+Follow the steps below to set up and run the project locally:
 
-Build the application for production:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Kh-Ol-An/task-tracker
 
-```bash
-# npm
-npm run build
+2. Go to the cloned project folder:
+   ```bash
+   cd task-tracker
 
-# pnpm
-pnpm build
+3. Installing dependencies. Make sure you have Node.js installed (recommended version 16 or later):
+   ```bash
+   npm install
 
-# yarn
-yarn build
+4. Launching a project in development mode:
+   ```bash
+   npm run dev
 
-# bun
-bun run build
-```
+5. Open http://localhost:3000 in your browser.
 
-Locally preview production build:
 
-```bash
-# npm
-npm run preview
+6. Building a project for production:
+   ```bash
+   npm run build
 
-# pnpm
-pnpm preview
+7. View the assembled project:
+   ```bash
+   npm run preview
 
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+8. Generate static files:
+   ```bash
+   npm run generate

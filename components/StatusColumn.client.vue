@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { reactive, ref, computed, toRef } from 'vue';
-import { EPriority, EStatus } from '@/models/task';
-import type { ITask } from '@/models/task';
+import { computed, reactive, ref } from 'vue';
+import { VueDraggableNext } from 'vue-draggable-next';
+import { EPriority, EStatus, type ITask } from '@/models/task';
 import { useTasksStore } from '@/stores/tasks';
 
 const props = defineProps<{
@@ -16,110 +16,118 @@ const statusLabels: Record<EStatus, string> = {
     [EStatus.DONE]: 'Done',
 };
 
-const currentTasks = toRef(computed(() => {
-    return tasksStore.tasks.filter((task) => task.status === props.taskStatus);
-}));
+const priorityLabels: Record<EPriority, string> = {
+    [EPriority.LOW]: 'Low',
+    [EPriority.MEDIUM]: 'Medium',
+    [EPriority.HIGH]: 'High',
+};
 
 const initialTask = {
     name: '',
     description: '',
     assignee: '',
-    performers: [],
+    performers: [] as string[],
     priority: EPriority.MEDIUM,
 };
 
-const openFormStatus = ref<EStatus | null>(null);
-const newTask = reactive<Partial<ITask>>({ ...initialTask });
+const currentTasks = computed(() => {
+    return tasksStore.tasks.filter((task) => task.status === props.taskStatus);
+});
 
-const openCreateTaskForm = () => {
-    openFormStatus.value = props.taskStatus;
-    Object.assign(newTask, { ...initialTask });
+const statusOfOpenedEditor = ref<EStatus | null>(null);
+
+const editingTask = reactive<Partial<ITask>>({...initialTask});
+
+const openEditorTask = (task: Partial<ITask>) => {
+    statusOfOpenedEditor.value = props.taskStatus;
+    Object.assign(editingTask, {...task});
 };
 
-const closeCreateTaskForm = () => {
-    openFormStatus.value = null;
-    Object.assign(newTask, { ...initialTask });
+const closeEditorTask = () => {
+    delete editingTask.id;
+    statusOfOpenedEditor.value = null;
 };
 
-const createTask = () => {
-    if (!newTask.name) {
-        alert('Name of task is a required field!');
-        return;
+const handleTaskDrop = (event: any) => {
+    if (event.added) {
+        tasksStore.updateTask(event.added.element.id, {status: props.taskStatus});
     }
-    tasksStore.addTask({
-        name: newTask.name!,
-        description: newTask.description,
-        assignee: newTask.assignee,
-        performers: [],
-        status: props.taskStatus,
-        priority: newTask.priority!,
-    });
-    closeCreateTaskForm();
+};
+
+const handleSaveTask = (task: Partial<ITask>) => {
+    if (task.id) {
+        tasksStore.updateTask(task.id, {...task})
+    } else {
+        tasksStore.addTask({
+            name: task.name!,
+            description: task.description,
+            assignee: task.assignee,
+            performers: task.performers || [],
+            status: props.taskStatus,
+            priority: task.priority!,
+        });
+    }
+    closeEditorTask();
 };
 </script>
 
 <template>
-    <div class="flex flex-col w-full bg-white rounded-lg shadow-md p-4 h-fit min-h-72">
+    <div class="flex flex-col w-full bg-white rounded-lg shadow-md p-4 h-fit">
         <h2 class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">
             {{ statusLabels[taskStatus] }}
         </h2>
 
-        <div v-for="task in currentTasks" :key="task.id">{{ task.name }}</div>
+        <VueDraggableNext
+            class="flex flex-col gap-4 min-h-8 rounded-lg"
+            :class="{
+                'border border-dashed': currentTasks.length === 0,
+            }"
+            :list="currentTasks"
+            :group="'tasks'"
+            @change="handleTaskDrop"
+        >
+            <div
+                class="bg-gray-50 p-4 rounded-lg shadow hover:shadow-md border"
+                v-for="task in currentTasks"
+                :key="task.id"
+            >
+                <h3 class="font-bold text-gray-800">
+                    <strong>Name:</strong> {{ task.name }}
+                </h3>
+                <p class="text-sm text-gray-600 mt-1">
+                    <strong>Description:</strong> {{ task.description }}
+                </p>
+                <p class="text-sm text-gray-500 mt-1">
+                    <strong>Responsible:</strong> {{ task.assignee }}
+                </p>
+                <p class="text-sm text-gray-500">
+                    <strong>Performers:</strong> {{ task.performers.join(', ') }}
+                </p>
+                <p class="text-sm text-gray-500">
+                    <strong>Priority:</strong> {{ priorityLabels[task.priority] }}
+                </p>
+
+                <button
+                    class="mt-4 p-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                    @click="openEditorTask(task)"
+                >
+                    Edit Task
+                </button>
+            </div>
+        </VueDraggableNext>
 
         <button
             class="mt-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            @click="openCreateTaskForm"
+            @click="openEditorTask(initialTask)"
         >
             Create Task
         </button>
 
-        <div v-if="openFormStatus === taskStatus" class="mt-4 bg-gray-100 p-4 rounded-lg border">
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-                Task Name*
-                <input
-                    v-model="newTask.name"
-                    type="text"
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm py-1 px-3"
-                />
-            </label>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-                Description
-                <textarea
-                    v-model="newTask.description"
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm py-1 px-3"
-                ></textarea>
-            </label>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-                Assignee
-                <input
-                    v-model="newTask.assignee"
-                    type="text"
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm py-1 px-3"
-                />
-            </label>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-                Priority
-                <select
-                    v-model="newTask.priority"
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm py-1 px-3"
-                >
-                    <option :value="EPriority.LOW">Low</option>
-                    <option :value="EPriority.MEDIUM">Medium</option>
-                    <option :value="EPriority.HIGH">High</option>
-                </select>
-            </label>
-            <button
-                class="mt-4 p-2 bg-green-500 text-white rounded hover:bg-green-600"
-                @click="createTask"
-            >
-                Save Task
-            </button>
-            <button
-                class="mt-4 ml-2 p-2 bg-red-500 text-white rounded hover:bg-red-600"
-                @click="closeCreateTaskForm"
-            >
-                Cancel
-            </button>
-        </div>
+        <EditorTask
+            v-if="statusOfOpenedEditor === taskStatus"
+            :task="editingTask"
+            @onCancel="closeEditorTask"
+            @onSave="handleSaveTask"
+        />
     </div>
 </template>

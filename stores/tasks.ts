@@ -10,5 +10,11 @@ export const useTasksStore = defineStore('tasks', {
             const id = crypto.randomUUID();
             this.tasks = [...this.tasks, { ...task, id }];
         },
+        updateTask(id: ITask['id'], updatedTask: Partial<ITask>) {
+            const index = this.tasks.findIndex((task) => task.id === id);
+            if (index !== -1) {
+                this.tasks[index] = { ...this.tasks[index], ...updatedTask };
+            }
+        },
     }
 });

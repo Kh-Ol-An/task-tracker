@@ -16,5 +16,8 @@ export const useTasksStore = defineStore('tasks', {
                 this.tasks[index] = { ...this.tasks[index], ...updatedTask };
             }
         },
+        deleteTask(id: ITask['id']) {
+            this.tasks = this.tasks.filter((task) => task.id !== id);
+        },
     }
 });

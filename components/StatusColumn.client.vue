@@ -69,16 +69,20 @@ const handleSaveTask = (task: Partial<ITask>) => {
     }
     closeEditorTask();
 };
+
+const handleDeleteTask = (id: ITask['id']) => {
+    tasksStore.deleteTask(id);
+}
 </script>
 
 <template>
-    <div class="flex flex-col w-full bg-white rounded-lg shadow-md p-4 h-fit">
+    <div class="flex flex-col w-full bg-white rounded-lg shadow-md p-4 h-fit max-h-[calc(100svh_-_32px)]">
         <h2 class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">
             {{ statusLabels[taskStatus] }}
         </h2>
 
         <VueDraggableNext
-            class="flex flex-col gap-4 min-h-8 rounded-lg"
+            class="flex flex-col gap-4 min-h-8 rounded-lg overflow-y-auto"
             :class="{
                 'border border-dashed': currentTasks.length === 0,
             }"
@@ -107,12 +111,21 @@ const handleSaveTask = (task: Partial<ITask>) => {
                     <strong>Priority:</strong> {{ priorityLabels[task.priority] }}
                 </p>
 
-                <button
-                    class="mt-4 p-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-                    @click="openEditorTask(task)"
-                >
-                    Edit Task
-                </button>
+                <div class="flex items-center gap-3 justify-between">
+                    <button
+                        class="mt-4 p-2 bg-stone-500 text-white rounded hover:bg-stone-600"
+                        @click="openEditorTask(task)"
+                    >
+                        Edit Task
+                    </button>
+
+                    <button
+                        class="mt-4 p-2 bg-rose-500 text-white rounded hover:bg-rose-600"
+                        @click="handleDeleteTask(task.id)"
+                    >
+                        Delete Task
+                    </button>
+                </div>
             </div>
         </VueDraggableNext>
 

@@ -70,7 +70,7 @@ const handleCancel = () => {
             Save
         </button>
         <button
-            class="mt-4 ml-2 p-2 bg-red-500 text-white rounded hover:bg-red-600"
+            class="mt-4 ml-2 p-2 bg-gray-500 text-white rounded hover:bg-gray-600"
             @click="handleCancel"
         >
             Cancel

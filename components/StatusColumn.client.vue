@@ -96,8 +96,11 @@ const handleDeleteTask = (id: ITask['id']) => {
                 v-for="task in currentTasks"
                 :key="task.id"
             >
-                <h3 class="font-bold text-gray-800">
-                    <strong>Task Name:</strong> {{ task.name }}
+                <h3 class="font-bold text-gray-800 flex items-center gap-1">
+                    <strong>Task Name:</strong>
+                    <NuxtLink :to="`/task/${task.id}`" class="text-blue-500 hover:underline">
+                        {{ task.name }}
+                    </NuxtLink>
                 </h3>
                 <p class="text-sm text-gray-600 mt-1">
                     <strong>Description:</strong> {{ task.description }}
@@ -114,6 +117,7 @@ const handleDeleteTask = (id: ITask['id']) => {
 
                 <div class="flex items-center gap-3 justify-between">
                     <button
+                        v-if="statusOfOpenedEditor !== taskStatus"
                         class="mt-4 p-2 bg-stone-500 text-white rounded hover:bg-stone-600"
                         @click="openEditorTask(task)"
                     >
@@ -121,7 +125,7 @@ const handleDeleteTask = (id: ITask['id']) => {
                     </button>
 
                     <button
-                        class="mt-4 p-2 bg-rose-500 text-white rounded hover:bg-rose-600"
+                        class="mt-4 ml-auto p-2 bg-rose-500 text-white rounded hover:bg-rose-600"
                         @click="handleDeleteTask(task.id)"
                     >
                         Delete Task
@@ -130,18 +134,18 @@ const handleDeleteTask = (id: ITask['id']) => {
             </div>
         </VueDraggableNext>
 
-        <button
-            class="mt-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            @click="openEditorTask(initialTask)"
-        >
-            Create Task
-        </button>
-
         <EditorTask
             v-if="statusOfOpenedEditor === taskStatus"
             :task="editingTask"
             @onCancel="closeEditorTask"
             @onSave="handleSaveTask"
         />
+        <button
+            v-else
+            class="mt-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            @click="openEditorTask(initialTask)"
+        >
+            Create Task
+        </button>
     </div>
 </template>

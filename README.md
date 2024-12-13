@@ -10,16 +10,19 @@ The Task Tracker is a simplified frontend application designed for managing task
 
 ### Core Features:
 - **Task Management**: Create, edit, and delete tasks with the following fields:
-   - Title
-   - Description
-   - Responsible Person
-   - Executors
-   - Status (TODO, In Progress, Done)
-   - Priority
+    - Title
+    - Description
+    - Responsible Person
+    - Executors
+    - Status (TODO, In Progress, Done)
+    - Priority
 - **Dashboard**:
-   - Columns representing task statuses (TODO, In Progress, Done).
-   - Drag-and-drop functionality for task reorganization.
-   - Automatic status updates upon dragging between columns.
+    - Columns representing task statuses (TODO, In Progress, Done).
+    - Drag-and-drop functionality for task reorganization.
+    - Automatic status updates upon dragging between columns.
+- **Routing**:
+    - Dynamic routing for accessing task details based on task ID (`pages/task/[slug].vue`).
+    - Navigation between pages with `NuxtLink`.
 - **Global State Management**: Ensures seamless data handling across components.
 
 ---
@@ -39,6 +42,7 @@ The Task Tracker is a simplified frontend application designed for managing task
 - **Pinia**: For global state management.
 - **Tailwind CSS**: Utility-first CSS framework for styling.
 - **Vue Draggable**: For drag-and-drop functionality.
+- **Vue Router**: For dynamic routing and navigation between pages.
 
 ---
 

@@ -25,26 +25,27 @@ const priorityLabels: Record<EPriority, string> = {
 const initialTask = {
     name: '',
     description: '',
-    assignee: '',
-    performers: [] as string[],
+    assignee: undefined,
+    performers: [],
     priority: EPriority.MEDIUM,
 };
+
+const statusOfOpenedEditor = ref<EStatus | null>(null);
+
+const editingTask = reactive<Partial<ITask>>({});
 
 const currentTasks = computed(() => {
     return tasksStore.tasks.filter((task) => task.status === props.taskStatus);
 });
 
-const statusOfOpenedEditor = ref<EStatus | null>(null);
-
-const editingTask = reactive<Partial<ITask>>({...initialTask});
-
 const openEditorTask = (task: Partial<ITask>) => {
     statusOfOpenedEditor.value = props.taskStatus;
-    Object.assign(editingTask, {...task});
+    Object.keys(editingTask).forEach(key => delete editingTask[key as keyof ITask]);
+    Object.assign(editingTask, JSON.parse(JSON.stringify(task)));
 };
 
 const closeEditorTask = () => {
-    delete editingTask.id;
+    Object.assign(editingTask, {});
     statusOfOpenedEditor.value = null;
 };
 
@@ -96,16 +97,16 @@ const handleDeleteTask = (id: ITask['id']) => {
                 :key="task.id"
             >
                 <h3 class="font-bold text-gray-800">
-                    <strong>Name:</strong> {{ task.name }}
+                    <strong>Task Name:</strong> {{ task.name }}
                 </h3>
                 <p class="text-sm text-gray-600 mt-1">
                     <strong>Description:</strong> {{ task.description }}
                 </p>
                 <p class="text-sm text-gray-500 mt-1">
-                    <strong>Responsible:</strong> {{ task.assignee }}
+                    <strong>Responsible:</strong> {{ task.assignee?.name }}
                 </p>
                 <p class="text-sm text-gray-500">
-                    <strong>Performers:</strong> {{ task.performers.join(', ') }}
+                    <strong>Performers:</strong> {{ task.performers.map(user => user.name).join(', ') }}
                 </p>
                 <p class="text-sm text-gray-500">
                     <strong>Priority:</strong> {{ priorityLabels[task.priority] }}

@@ -1,3 +1,5 @@
+import type { IUser } from '@/models/user';
+
 export enum EStatus {
     TODO = 'todo',
     IN_PROGRESS = 'progress',
@@ -14,8 +16,8 @@ export interface ITask {
     id: string,
     name: string,
     description?: string,
-    assignee?: string,
-    performers: string[],
+    assignee?: IUser,
+    performers: IUser[],
     status: EStatus,
     priority: EPriority,
 }
